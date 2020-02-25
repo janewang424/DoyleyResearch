@@ -36,4 +36,4 @@ def auto_test(read_path, model_name, save_path='', output_size=(420, 420)):
 
 # only for my test
 if __name__ == '__main__':
-    auto_test('', 'scratch_model_512_32_gpu2.hdf5')
+    auto_test('', '')
