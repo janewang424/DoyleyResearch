@@ -3,12 +3,10 @@
 Created on 2019-3-18
 @author: LeonShangguan
 """
-from generater import *
-from keras.models import *
 import cv2
-from segmentation_models import Unet
-from segmentation_models.losses import bce_jaccard_loss
-from segmentation_models.metrics import iou_score
+import glob
+import numpy as np
+from keras.models import load_model
 
 
 def auto_test(read_path, model_name, save_path='', output_size=(420, 420)):
@@ -31,8 +29,12 @@ def auto_test(read_path, model_name, save_path='', output_size=(420, 420)):
         img = np.reshape(img, (1,)+img.shape)
         result = model.predict(img)[0, :, :, :]
         result = cv2.resize(result, output_size)*255
-        cv2.imwrite(save_path + filename.split('/')[-1][:-4] + '_rst.jpg', result)
+        cv2.imwrite(save_path + filename.split('/')[-1][:-4] + '_4epoches.jpg', result)
+
 
 # only for my test
 if __name__ == '__main__':
-    auto_test('../test', 'Unet_Pretrained_bce_jaccard_loss_iou_score_tuned.hdf5')
+    auto_test(read_path='../test',
+              model_name='Unet_Pretrained_bce_jaccard_loss_iou_score_tuned.hdf5',
+              save_path='../',
+              output_size=(1000, 1000))

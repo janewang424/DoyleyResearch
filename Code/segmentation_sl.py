@@ -23,7 +23,7 @@ from keras.utils import multi_gpu_model
 # define model
 # model = Unet(classes=1, encoder_weights='imagenet')
              # decoder_filters=[512, 256, 128, 64, 32])
-model = load_model('Unet_Pretrained_bce_jaccard_loss_iou_score.hdf5', compile=False)
+model = load_model('Unet_Pretrained_bce_jaccard_loss_iou_score_tuned.hdf5', compile=False)
 
 # parallel_model = multi_gpu_model(model, gpus=2)
 # parallel_model.compile('Adam', loss=bce_jaccard_loss, metrics=[iou_score])
@@ -34,7 +34,7 @@ data_gen_args = dict(fill_mode='nearest')
 train_data = trainGenerator(12, data_gen_args, save_to_dir=None)
 val_data = valGenerator(12, data_gen_args, save_to_dir=None)
 
-save_path = 'Unet_Pretrained_bce_jaccard_loss_iou_score_tuned' + '.hdf5'
+save_path = 'Unet_Pretrained_bce_jaccard_loss_iou_score_tuned_10epoches' + '.hdf5'
 
 callbacks = [EarlyStopping(monitor='val_loss',
                            patience=8,
@@ -52,7 +52,7 @@ callbacks = [EarlyStopping(monitor='val_loss',
 
 model.fit_generator(train_data,
                     steps_per_epoch=np.ceil(11122/12),
-                    epochs=2,
+                    epochs=6,
                     callbacks=callbacks,
                     validation_data=val_data,
                     validation_steps=np.ceil(2766/12),
