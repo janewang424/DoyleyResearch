@@ -1,5 +1,8 @@
 # DoyleyResearch
-http://note4lin.top/post/keras_dataload/
+how to load data using from\_derictory:  
+http://note4lin.top/post/keras_dataload/  
+how to customize own dataloader:  
+https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly  
 
 current 2020.02.26:  
 model: Unet_Pretrained_bce_jaccard_loss_iou_score_tuned.hdf5  
