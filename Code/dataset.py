@@ -52,10 +52,10 @@ class Carotid_DataGenerator(keras.utils.Sequence):
         self.batch_size = batch_size
         self.target_shape = target_shape
         self.shuffle = shuffle
-        self.indexes = np.arange(self.df.shape[0])
+        self.on_epoch_end()
 
     def __len__(self):
-        return len(self.df)
+        return self.df.shape[0]//self.batch_size
 
     def __getitem__(self, idx):
         start = idx * self.batch_size
@@ -73,9 +73,10 @@ class Carotid_DataGenerator(keras.utils.Sequence):
             images[i, ] = np.asarray(image/255, dtype=np.float32)
             masks[i, ] = np.asarray(mask/255, dtype=np.int32)
 
-        return images, masks
+        return np.stack((images, masks), axis=0)
 
     def on_epoch_end(self):
+        self.indexes = np.arange(self.df.shape[0])
         if self.shuffle:
             np.random.shuffle(self.indexes)
 

@@ -17,13 +17,13 @@ from segmentation_models.metrics import iou_score
 from keras.utils import multi_gpu_model
 
 
-# BACKBONE = 'resnet34'
+BACKBONE = 'resnet34'
 # preprocess_input = get_preprocessing(BACKBONE)
 
 # define model
-# model = Unet(classes=1, encoder_weights='imagenet')
-             # decoder_filters=[512, 256, 128, 64, 32])
-model = load_model('Unet_Pretrained_bce_jaccard_loss_iou_score_tuned.hdf5', compile=False)
+model = Unet(BACKBONE, classes=1, encoder_weights='imagenet',
+             decoder_filters=[512, 256, 128, 64, 32])
+# model = load_model('Unet_Pretrained_bce_jaccard_loss_iou_score_tuned.hdf5', compile=False)
 
 # parallel_model = multi_gpu_model(model, gpus=2)
 # parallel_model.compile('Adam', loss=bce_jaccard_loss, metrics=[iou_score])
@@ -31,16 +31,23 @@ model.compile('Adam', loss=bce_jaccard_loss, metrics=[iou_score])
 model.summary()
 
 data_gen_args = dict(fill_mode='nearest')
-# from dataset import Carotid_DataGenerator
-# train_data = Carotid_DataGenerator(df_path='/home/datascience/Leon/DoyleyResearch/Code/dataset/split/train_fold_0_seed_960630.csv',
-#                                         image_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images/',
-#                                         mask_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/masks/',
-#                                         batch_size=8,
-#                                         target_shape=(512, 512),
-#                                         shuffle=True)
-train_data = trainGenerator(12, data_gen_args, save_to_dir=None)
-val_data = valGenerator(12, data_gen_args, save_to_dir=None)
-
+from dataset import Carotid_DataGenerator
+train_data = Carotid_DataGenerator(df_path='/home/datascience/Leon/DoyleyResearch/Code/dataset/split/train_fold_0_seed_960630.csv',
+                                   image_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images/',
+                                   mask_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/masks/',
+                                   batch_size=4,
+                                   target_shape=(512, 512),
+                                   shuffle=False)
+val_data = Carotid_DataGenerator(df_path='/home/datascience/Leon/DoyleyResearch/Code/dataset/split/val_fold_0_seed_960630.csv',
+                                 image_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images/',
+                                 mask_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/masks/',
+                                 batch_size=4,
+                                 target_shape=(512, 512),
+                                 shuffle=False)
+# train_data = trainGenerator(8, data_gen_args, save_to_dir=None)
+# val_data = valGenerator(4, data_gen_args, save_to_dir=None)
+# a = train_data.__next__()
+# print(len(a), a[0].shape)
 save_path = 'Unet_Pretrained_bce_jaccard_loss_iou_score_tuned_10epoches' + '.hdf5'
 
 callbacks = [EarlyStopping(monitor='val_loss',
@@ -58,11 +65,9 @@ callbacks = [EarlyStopping(monitor='val_loss',
                              save_best_only=True)]
 
 model.fit_generator(train_data,
-                    steps_per_epoch=np.ceil(11122/12),
+                    validation_data=val_data,
                     epochs=6,
                     callbacks=callbacks,
-                    validation_data=val_data,
-                    validation_steps=np.ceil(2766/12),
                     verbose=1)
 
 
