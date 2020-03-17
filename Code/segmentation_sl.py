@@ -31,6 +31,13 @@ model.compile('Adam', loss=bce_jaccard_loss, metrics=[iou_score])
 model.summary()
 
 data_gen_args = dict(fill_mode='nearest')
+# from dataset import Carotid_DataGenerator
+# train_data = Carotid_DataGenerator(df_path='/home/datascience/Leon/DoyleyResearch/Code/dataset/split/train_fold_0_seed_960630.csv',
+#                                         image_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images/',
+#                                         mask_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/masks/',
+#                                         batch_size=8,
+#                                         target_shape=(512, 512),
+#                                         shuffle=True)
 train_data = trainGenerator(12, data_gen_args, save_to_dir=None)
 val_data = valGenerator(12, data_gen_args, save_to_dir=None)
 

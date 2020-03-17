@@ -52,8 +52,8 @@ def trainGenerator(batch_size, aug_dict, image_color_mode="rgb",
     image_datagen = ImageDataGenerator(**aug_dict)
     mask_datagen = ImageDataGenerator(**aug_dict)
     image_generator = image_datagen.flow_from_directory(
-        '../dataset/train',
-        classes=['images_set'],
+        '/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images',
+        classes=['VN078'],
         class_mode=None,
         color_mode=image_color_mode,
         target_size=target_size,
@@ -62,8 +62,8 @@ def trainGenerator(batch_size, aug_dict, image_color_mode="rgb",
         save_prefix=image_save_prefix,
         seed=seed)
     mask_generator = mask_datagen.flow_from_directory(
-        '../dataset/train',
-        classes=['masks_set'],
+        '/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/masks',
+        classes=['VN078'],
         class_mode=None,
         color_mode=mask_color_mode,
         target_size=target_size,
@@ -88,8 +88,8 @@ def valGenerator(batch_size, aug_dict, image_color_mode="rgb",
     image_datagen = ImageDataGenerator(**aug_dict)
     mask_datagen = ImageDataGenerator(**aug_dict)
     image_generator = image_datagen.flow_from_directory(
-        '../dataset/val',
-        classes=['images_set'],
+        '/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images',
+        classes=['VN078'],
         class_mode=None,
         color_mode=image_color_mode,
         target_size=target_size,
@@ -98,8 +98,8 @@ def valGenerator(batch_size, aug_dict, image_color_mode="rgb",
         save_prefix=image_save_prefix,
         seed=seed)
     mask_generator = mask_datagen.flow_from_directory(
-        '../dataset/val',
-        classes=['masks_set'],
+        '/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images',
+        classes=['VN078'],
         class_mode=None,
         color_mode=mask_color_mode,
         target_size=target_size,
