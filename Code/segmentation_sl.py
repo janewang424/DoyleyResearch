@@ -17,13 +17,13 @@ from segmentation_models.metrics import iou_score
 from keras.utils import multi_gpu_model
 
 
-BACKBONE = 'resnet34'
+# BACKBONE = 'resnet34'
 # preprocess_input = get_preprocessing(BACKBONE)
 
 # define model
-model = Unet(BACKBONE, classes=1, encoder_weights='imagenet',
-             decoder_filters=[512, 256, 128, 64, 32])
-# model = load_model('Unet_Pretrained_bce_jaccard_loss_iou_score_tuned.hdf5', compile=False)
+# model = Unet(classes=1, encoder_weights='imagenet')
+#              decoder_filters=[512, 256, 128, 64, 32])
+model = load_model('Unet_Pretrained_bce_jaccard_loss_iou_newsplit.hdf5', compile=False)
 
 # parallel_model = multi_gpu_model(model, gpus=2)
 # parallel_model.compile('Adam', loss=bce_jaccard_loss, metrics=[iou_score])
@@ -48,7 +48,7 @@ val_data = Carotid_DataGenerator(df_path='/home/datascience/Leon/DoyleyResearch/
 # val_data = valGenerator(4, data_gen_args, save_to_dir=None)
 # a = train_data.__next__()
 # print(len(a), a[0].shape)
-save_path = 'Unet_Pretrained_bce_jaccard_loss_iou_score_tuned_10epoches' + '.hdf5'
+save_path = 'Unet_Pretrained_bce_jaccard_loss_iou_newsplit' + '.hdf5'
 
 callbacks = [EarlyStopping(monitor='val_loss',
                            patience=8,
