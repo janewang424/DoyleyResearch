@@ -5,9 +5,8 @@ Created on 2020-3-17
 """
 import os
 import keras
-import cv2
-import numpy as np
 import pandas as pd
+from augmentation import *
 from sklearn.model_selection import KFold
 
 
@@ -44,6 +43,7 @@ class Carotid_DataGenerator(keras.utils.Sequence):
                  mask_path,
                  batch_size,
                  target_shape,
+                 augmentation=False,
                  shuffle=False):
 
         self.df = pd.read_csv(df_path)['0']
@@ -51,6 +51,7 @@ class Carotid_DataGenerator(keras.utils.Sequence):
         self.mask_path = mask_path
         self.batch_size = batch_size
         self.target_shape = target_shape
+        self.augmentation = augmentation
         self.shuffle = shuffle
         self.on_epoch_end()
 
@@ -69,6 +70,15 @@ class Carotid_DataGenerator(keras.utils.Sequence):
         for i, image_id in enumerate(image_ids):
             image = cv2.resize(cv2.imread(self.image_path + image_id), self.target_shape, cv2.INTER_AREA)
             mask = cv2.resize(cv2.imread(self.mask_path + image_id), self.target_shape, cv2.INTER_AREA)
+
+            if self.augmentation:
+                for op in np.random.choice([
+                    lambda image, mask : do_identity(image, mask),
+                    lambda image, mask: do_horizon_flip(image, mask),
+                    lambda image, mask: do_vertical_flip(image, mask),
+                    lambda image, mask: do_diagonal_flip(image, mask),
+                ], 1):
+                    image, mask = op(image, mask)
 
             images[i, ] = np.asarray(image/255, dtype=np.float32)
             masks[i, ] = np.asarray(mask/255, dtype=np.int32)
