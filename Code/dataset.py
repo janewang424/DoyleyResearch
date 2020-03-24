@@ -77,6 +77,12 @@ class Carotid_DataGenerator(keras.utils.Sequence):
                     lambda image, mask: do_horizon_flip(image, mask),
                     lambda image, mask: do_vertical_flip(image, mask),
                     lambda image, mask: do_diagonal_flip(image, mask),
+                    lambda image, mask: do_random_rotate(image, mask),
+                ], 1):
+                    image, mask = op(image, mask)
+
+                for op in np.random.choice([
+                    lambda image, mask: do_random_rotate(image, mask),
                 ], 1):
                     image, mask = op(image, mask)
 

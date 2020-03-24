@@ -17,6 +17,7 @@ from dataset import get_train_val_split
 
 
 def train(backbone,
+          load_pretrain,
           data_path,
           split_path,
           save_path,
@@ -30,7 +31,9 @@ def train(backbone,
                         n_splits=n_split,
                         seed=seed)
 
-    if backbone is not None:
+    if load_pretrain is not None:
+        model = load_model(load_pretrain, compile=False)
+    elif backbone is not None:
         model = Unet(backbone, classes=1, encoder_weights='imagenet')
     else:
         model = Unet(classes=1, encoder_weights='imagenet')
@@ -80,6 +83,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Get input parameters.")
 
     parser.add_argument('--backbone', type=str, default=None)
+    parser.add_argument('--load_pretrain', type=str, default=None)
     parser.add_argument('--data_path', type=str,
                         default='/home/leon/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/')
     parser.add_argument('--split_path', type=str,
@@ -93,17 +97,17 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    train(args.backbone,
-          args.data_path,
-          args.split_path,
-          args.save_path,
-          args.n_split,
-          args.seed,
-          args.batch_size,
-          args.fold,
-          )
-
-
+    train(
+        backbone=args.backbone,
+        load_pretrain=args.load_pretrain,
+        data_path=args.data_path,
+        split_path=args.split_path,
+        save_path=args.save_path,
+        n_split=args.n_split,
+        seed=args.seed,
+        batch_size=args.batch_size,
+        fold=args.fold
+    )
 
 
 

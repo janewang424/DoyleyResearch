@@ -38,7 +38,7 @@ def do_diagonal_flip(image, mask, p=0.5):
         return image, mask
 
 
-def do_random_rotate(image, magnitude=0.5, p=0.5):
+def do_random_rotate(image, mask, magnitude=0.5, p=0.5):
     if np.random.uniform(0, 1) < p:
         angle = np.random.uniform(-1, 1)*180*magnitude
 
@@ -48,5 +48,7 @@ def do_random_rotate(image, magnitude=0.5, p=0.5):
         transform = cv2.getRotationMatrix2D((cx, cy), angle, 1.0)
         image = cv2.warpAffine(image, transform, (width, height), flags=cv2.INTER_LINEAR,
                                borderMode=cv2.BORDER_CONSTANT, borderValue=0)
-    return image
+        mask = cv2.warpAffine(mask, transform, (width, height), flags=cv2.INTER_LINEAR,
+                               borderMode=cv2.BORDER_CONSTANT, borderValue=0)
+    return image, mask
 
