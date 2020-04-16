@@ -6,12 +6,39 @@ Created on 2020-3-17
 import os
 import keras
 import pandas as pd
+import numpy as np
 from augmentation import *
 from sklearn.model_selection import KFold
 
+# split by folders
+# def get_train_val_split(data_path="../Carotid-Data/Carotid-Data/images/",
+#                         save_path="dataset/",
+#                         n_splits=5,
+#                         seed=960630):
+#     os.makedirs(save_path + '%s_split_seed_%s' % (n_splits, seed) +'/', exist_ok=True)
+#     kf = KFold(n_splits=n_splits, random_state=seed, shuffle=True)
+#     df = pd.DataFrame(os.listdir(data_path))
+#
+#     for fold, (train_idx, val_idx) in enumerate(kf.split(df)):
+#         train_df, val_df = [], []
+#         for image_dir in df.iloc[train_idx].values:
+#             image_ids = os.listdir(data_path + image_dir[0])
+#             for image_id in image_ids:
+#                 train_df.append(image_dir[0] + '/' + image_id)
+#
+#         for image_dir in df.iloc[val_idx].values:
+#             image_ids = os.listdir(data_path + image_dir[0])
+#             for i in range(len(image_ids)):
+#                 val_df.append(image_dir[0] + '/' + image_ids[i])
+#
+#         pd.DataFrame(train_df).to_csv(save_path + 'split/' + '/train_fold_%s_seed_%s.csv' % (fold, seed))
+#         pd.DataFrame(val_df).to_csv(save_path + 'split/' + '/val_fold_%s_seed_%s.csv' % (fold, seed))
+#
+#     return
 
-def get_train_val_split(data_path="../Carotid-Data/Carotid-Data/images/",
-                        save_path="dataset/",
+# split by all data
+def get_train_val_split(data_path="../Carotid-Data/Carotid-Data/images_set/",
+                        save_path="datasets/",
                         n_splits=5,
                         seed=960630):
     os.makedirs(save_path + '%s_split_seed_%s' % (n_splits, seed) +'/', exist_ok=True)
@@ -21,14 +48,10 @@ def get_train_val_split(data_path="../Carotid-Data/Carotid-Data/images/",
     for fold, (train_idx, val_idx) in enumerate(kf.split(df)):
         train_df, val_df = [], []
         for image_dir in df.iloc[train_idx].values:
-            image_ids = os.listdir(data_path + image_dir[0])
-            for image_id in image_ids:
-                train_df.append(image_dir[0] + '/' + image_id)
+            train_df.append(image_dir[0])
 
         for image_dir in df.iloc[val_idx].values:
-            image_ids = os.listdir(data_path + image_dir[0])
-            for i in range(len(image_ids)):
-                val_df.append(image_dir[0] + '/' + image_ids[i])
+            val_df.append(image_dir[0])
 
         pd.DataFrame(train_df).to_csv(save_path + 'split/' + '/train_fold_%s_seed_%s.csv' % (fold, seed))
         pd.DataFrame(val_df).to_csv(save_path + 'split/' + '/val_fold_%s_seed_%s.csv' % (fold, seed))
@@ -86,6 +109,7 @@ class Carotid_DataGenerator(keras.utils.Sequence):
                 ], 1):
                     image, mask = op(image, mask)
 
+                do_CLAHE(image, mask)
             images[i, ] = np.asarray(image/255, dtype=np.float32)
             masks[i, ] = np.asarray(mask/255, dtype=np.int32)
 
@@ -98,12 +122,19 @@ class Carotid_DataGenerator(keras.utils.Sequence):
 
 
 if __name__ == "__main__":
-    data_loader = Carotid_DataGenerator(df_path='/home/datascience/Leon/DoyleyResearch/Code/dataset/split/train_fold_0_seed_960630.csv',
-                                        image_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images/',
-                                        mask_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/masks/',
+    data_loader = Carotid_DataGenerator(df_path='/home/datascience/Leon/DoyleyResearch/Code/datasets/split/train_fold_0_seed_960630.csv',
+                                        image_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/image_set/',
+                                        mask_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/mask_set/',
                                         batch_size=8,
                                         target_shape=(512, 512),
                                         shuffle=True)
+
+    # data_loader = Carotid_DataGenerator(df_path='/home/datascience/Leon/DoyleyResearch/Code/datasets/split/train_fold_0_seed_960630.csv',
+    #                                     image_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/images/',
+    #                                     mask_path='/home/datascience/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/masks/',
+    #                                     batch_size=8,
+    #                                     target_shape=(512, 512),
+    #                                     shuffle=True)
     from keras.models import Sequential
 
     model = Sequential()

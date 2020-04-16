@@ -52,3 +52,22 @@ def do_random_rotate(image, mask, magnitude=0.5, p=0.5):
                                borderMode=cv2.BORDER_CONSTANT, borderValue=0)
     return image, mask
 
+
+def do_CLAHE(image, mask, clipLimit=2.0, tileGridSize=(8,8), p=0.5):
+    if np.random.uniform(0, 1) < p:
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+
+        gryimg = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+        gryimg_planes = cv2.split(gryimg)
+        gryimg_planes[0] = clahe.apply(gryimg_planes[0])
+        gryimg = cv2.merge(gryimg_planes)
+        image = cv2.cvtColor(gryimg, cv2.COLOR_LAB2BGR)
+
+        grymsk = cv2.cvtColor(mask, cv2.COLOR_BGR2LAB)
+        grymsk_planes = cv2.split(grymsk)
+        grymsk_planes[0] = clahe.apply(grymsk_planes[0])
+        grymsk = cv2.merge(grymsk_planes)
+        mask = cv2.cvtColor(grymsk, cv2.COLOR_LAB2BGR)
+        return image, mask  # Random CLAHE Contrast Limited Adaptive Histogram Equalization
+    else:
+        return image, mask

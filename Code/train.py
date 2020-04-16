@@ -26,10 +26,17 @@ def train(backbone,
           batch_size=4,
           fold=0):
 
-    get_train_val_split(data_path=data_path+'images/',
+    # split by all data
+    get_train_val_split(data_path=data_path+'image_set/',
                         save_path=split_path,
                         n_splits=n_split,
                         seed=seed)
+
+    # split by folders
+    # get_train_val_split(data_path=data_path+'images/',
+    #                     save_path=split_path,
+    #                     n_splits=n_split,
+    #                     seed=seed)
 
     if load_pretrain is not None:
         model = load_model(load_pretrain, compile=False)
@@ -41,22 +48,41 @@ def train(backbone,
     model.compile('Adam', loss=bce_jaccard_loss, metrics=[iou_score])
     model.summary()
 
+    # split by all images
     train_data = Carotid_DataGenerator(
         df_path=split_path+'split/train_fold_{}_seed_{}.csv'.format(fold, seed),
-        image_path=data_path + 'images/',
-        mask_path=data_path + '/masks/',
+        image_path=data_path + 'image_set/',
+        mask_path=data_path + '/mask_set/',
         batch_size=batch_size,
         target_shape=(512, 512),
         augmentation=True,
         shuffle=False)
     val_data = Carotid_DataGenerator(
         df_path=split_path + 'split/val_fold_{}_seed_{}.csv'.format(fold, seed),
-        image_path=data_path + 'images/',
-        mask_path=data_path + '/masks/',
+        image_path=data_path + 'image_set/',
+        mask_path=data_path + '/mask_set/',
         batch_size=batch_size,
         target_shape=(512, 512),
         augmentation=True,
         shuffle=False)
+
+    # split by folder
+    # train_data = Carotid_DataGenerator(
+    #     df_path=split_path+'split/train_fold_{}_seed_{}.csv'.format(fold, seed),
+    #     image_path=data_path + 'images/',
+    #     mask_path=data_path + '/masks/',
+    #     batch_size=batch_size,
+    #     target_shape=(512, 512),
+    #     augmentation=True,
+    #     shuffle=False)
+    # val_data = Carotid_DataGenerator(
+    #     df_path=split_path + 'split/val_fold_{}_seed_{}.csv'.format(fold, seed),
+    #     image_path=data_path + 'images/',
+    #     mask_path=data_path + '/masks/',
+    #     batch_size=batch_size,
+    #     target_shape=(512, 512),
+    #     augmentation=True,
+    #     shuffle=False)
 
     callbacks = [EarlyStopping(monitor='val_loss',
                                patience=8,
@@ -74,7 +100,7 @@ def train(backbone,
 
     model.fit_generator(train_data,
                         validation_data=val_data,
-                        epochs=6,
+                        epochs=10,
                         callbacks=callbacks,
                         verbose=1)
 
@@ -85,15 +111,17 @@ if __name__ == '__main__':
     parser.add_argument('--backbone', type=str, default=None)
     parser.add_argument('--load_pretrain', type=str, default=None)
     parser.add_argument('--data_path', type=str,
-                        default='/home/leon/Leon/DoyleyResearch/Carotid-Data/Carotid-Data/')
+                        default='C:/Users/15853/Desktop/IVUS_Research/DoyleyResearch-master/Code/Carotid-Data/')
+    # parser.add_argument('--split_path', type=str,
+    #                     default='C:/Users/15853/Desktop/IVUS_Research/DoyleyResearch-master/Code/dataset/')
     parser.add_argument('--split_path', type=str,
-                        default='/home/leon/Leon/DoyleyResearch/Code/dataset/')
+                        default='C:/Users/15853/Desktop/IVUS_Research/DoyleyResearch-master/Code/datasets/')
     parser.add_argument('--save_path', type=str,
-                        default='/home/leon/Leon/DoyleyResearch/Code/Unet_test.hdf5')
+                        default='C:/Users/15853/Desktop/IVUS_Research/DoyleyResearch-master/Code/Unet_test_allimage_clahe_10epoch.hdf5')
     parser.add_argument('--n_split', type=int, default=5)
     parser.add_argument('--seed', type=int, default=960630)
     parser.add_argument('--batch_size', type=int, default=4)
-    parser.add_argument('--fold', type=int, default=0)
+    parser.add_argument('--fold', type=int, default=1)
 
     args = parser.parse_args()
 

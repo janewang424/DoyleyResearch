@@ -35,6 +35,6 @@ def auto_test(read_path, model_name, save_path='', output_size=(420, 420)):
 # only for my test
 if __name__ == '__main__':
     auto_test(read_path='../test',
-              model_name='Unet_Pretrained_bce_jaccard_loss_iou_newsplit.hdf5',
+              model_name='Unet_test_allimage_clahe_10epoch.hdf5',
               save_path='../',
               output_size=(1000, 1000))
