@@ -42,7 +42,7 @@ callbacks = [EarlyStopping(monitor='val_loss',
                                factor=0.1,
                                patience=4,
                                verbose=1,
-                               epsilon=1e-4),
+                               epsilon=1e-4), #min_delta
              ModelCheckpoint(monitor='val_loss',
                              filepath=save_path,
                              verbose=True,
